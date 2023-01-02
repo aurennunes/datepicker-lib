@@ -1,0 +1,9 @@
+{
+  "name": "datepicker-lib",
+  "version": "1.0.0",
+  "description": "Calendar to use in forms instead of the datepicker.",
+  "main": "index.js",
+  "repository": "https://github.com/aurennunes/datepicker-lib",
+  "author": "aurennunes <auren1207@gmail.com>",
+  "license": "MIT"
+}
