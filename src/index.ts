@@ -1,177 +1,155 @@
 class Calendar {
-  private months = new Array(
-    "Janeiro",
-    "Fevereiro",
-    "Março",
-    "Abril",
-    "Maio",
-    "Junho",
-    "Julho",
-    "Agosto",
-    "Setembro",
-    "Outubro",
-    "Novembro",
-    "Dezembro"
-  );
+	private currentMonth: number;
+	private currentYear: number;
+	private Element: HTMLElement;
+	private CalendarTable: HTMLTableSectionElement;
 
-  private day = 0;
-  private month = 0;
-  private year = 0;
+	today: Date;
 
-  private Element: HTMLDivElement | null = null;
-  private idElement =  "id_date_" + Math.floor(Math.random() * 10000000000000);
+	months = {
+		pt: [
+			"Janeiro",
+			"Fevereiro",
+			"Março",
+			"Abril",
+			"Maio",
+			"Junho",
+			"Julho",
+			"Agosto",
+			"Setembro",
+			"Outubro",
+			"Novembro",
+			"Dezembro",
+		],
+		en: [
+			"January",
+			"February",
+			"March",
+			"April",
+			"May",
+			"June",
+			"July",
+			"August",
+			"September",
+			"October",
+			"November",
+			"December",
+		],
+	};
 
-  nextYear() {
-    this.year += 1;
-    this.render({ day: this.day, month: this.month, year: this.year });
-  }
+	open() {
+		this.Element.classList.add("opacity-100", "bottom-0");
+	}
+	close() {
+		this.Element.classList.remove("opacity-100", "bottom-0");
+	}
 
-  prevYear() {
-    this.year -= 1;
-    this.render({ day: this.day, month: this.month, year: this.year });
-  }
+	constructor() {
+		const template = document.createElement("template");
+		const randomID = `id_${Math.random().toString(36).slice(2)}_${Math.floor(
+			Math.random() * 1000000000000
+		)}`;
 
-  constructor(date: { day: number; month: number; year: number }) {
-    this.Element = document.createElement("div");
-    this.Element.id = this.idElement;
-    this.render(date);
-  }
+		let defaultHTML = `
+      <div id="${randomID}" class="h-full w-full fixed right-0 opacity-0 -bottom-full duration-700 left-0 bg-black/[.40] flex items-center justify-center">
+        <div class="bg-white w-auto p-5 shadow-lg rounded-md">
+          <table>
+            <thead>
+              <tr>
+                <th class="bg-blue-100 border text-center px-4 py-4">Dom</th>
+                <th class="bg-blue-100 border text-left px-4 py-4">Seg</th>
+                <th class="bg-blue-100 border text-left px-4 py-4">Ter</th>
+                <th class="bg-blue-100 border text-left px-4 py-4">Qua</th>
+                <th class="bg-blue-100 border text-left px-4 py-4">Qui</th>
+                <th class="bg-blue-100 border text-left px-4 py-4">Sex</th>
+                <th class="bg-blue-100 border text-left px-4 py-4">Sab</th>
+              </tr>
+            </thead>
 
-  private render(date_input: { day: number; month: number; year: number }) {
-    let html = "";
+            <tbody class="table-calendar"></tbody>
+          </table>
+        </div>
+      </div>`;
 
-    const date = new Date();
-    const { day: day_input, month: month_input, year: year_input } = date_input;
+		this.today = new Date();
 
-    this.day = day_input ?? date.getDate();
-    this.month = month_input ?? date.getMonth();
-    this.year = year_input ?? date.getFullYear();
+		template.innerHTML = defaultHTML;
 
-    if (this.year <= 200) this.year += 1900;
+		this.Element = template.content.getElementById(randomID) as HTMLElement;
+		this.CalendarTable = template.content.querySelector(
+			".table-calendar"
+		) as HTMLTableSectionElement;
 
-    let days_in_month = new Array(
-      31,
-      28,
-      31,
-      30,
-      31,
-      30,
-      31,
-      31,
-      30,
-      31,
-      30,
-      31
-    );
-    let month_inputaujorduiu = this.month;
-    this.month = month_input;
+		this.currentMonth = this.today.getMonth();
+		this.currentYear = this.today.getFullYear();
 
-    //ano bissesto, muda dia fevereiro
-    if (this.year % 4 == 0 && this.year != 1900) days_in_month[1] = 29;
+		document.body.appendChild(template.content);
+		this.init(this.currentMonth, this.currentYear);
+	}
 
-    let total = days_in_month[this.month]; //days month
-    let date_today = this.day + " " + this.months[this.month] + " " + this.year; //22 ouctober 2014
+	private init(month: number, year: number) {
+		let firstDay = new Date(year, month).getDay();
+		let daysInMonth = 32 - new Date(year, month, 32).getDate();
 
-    let beg_j = date; //today date
+		this.CalendarTable.innerHTML = "";
 
-    if (this.month > 0) {
-      let soma = 0;
-      for (let m = 0; m < this.month; m++) soma += days_in_month[m];
+		window.addEventListener("click", (e) => {
+			// @ts-ignore
+			if (e.target.id === this.Element.id) {
+				this.close();
+			}
+		});
 
-      beg_j.setDate(soma + 1);
-    } else beg_j.setDate(1);
+		let date = 1;
+		for (let i = 0; i < 6; i++) {
+			let row = document.createElement("tr");
 
-    if (beg_j.getDate() == 2) {
-      //1
-      beg_j.setDate(0);
-    }
-    let beg_g = beg_j.getDay();
+			for (let j = 0; j < 7; j++) {
+				if (i === 0 && j < firstDay) {
+					let cell = document.createElement("td");
+					let cellText = document.createTextNode("");
 
-    html += `<h3>${date_today}</h3>`;
-    html += `
-      <table class="cal_calendar">
-        <tr>
-          <th colspan="7">${this.months[month_input]}  ${this.year}</th>
-        </tr>
-        <br>`;
+					cell.appendChild(cellText);
+					row.appendChild(cell);
+				} else if (date > daysInMonth) break;
+				else {
+					let cell = document.createElement("td");
+					cell.classList.add("border", "p-4", "text-center");
+					let cellText = document.createTextNode(date.toString());
+					if (
+						date === this.today.getDate() &&
+						year === this.today.getFullYear() &&
+						month === this.today.getMonth()
+					)
+						cell.style.backgroundColor = "red";
 
-    html += `
-      <tr class="cal_d_weeks">
-        <th>Seg</th>
-        <th>Ter</th>
-        <th>Qua</th>
-        <th>Qui</th>
-        <th>Sex</th>
-        <th>Sab</th>
-        <th>Dom</th>
-      </tr>
-      <tr>`;
+					cell.appendChild(cellText);
+					row.appendChild(cell);
+					date++;
+				}
+			}
 
-    let week = 0;
-
-    for (let i = 1; i <= beg_g; i++) {
-      // let beforemonth = months[month - 1];
-
-      html += `<td>
-          <div class ="divday"/>${
-            days_in_month[this.month - 1] - beg_g + i
-          }</div>
-        </td>`;
-
-      week++;
-    }
-    for (let i = 1; i <= total; i++) {
-      if (week == 0) {
-        document.write("<tr>");
-      }
-
-      if (this.day == i && month_inputaujorduiu == this.month) {
-        //si le jour = le jour de aujordhui est si le month_input = month_input aujordui
-        html +=
-          "<td><b><div class ='divtoday' onclick='open_popup(\"" +
-          i +
-          " " +
-          this.months[this.month] +
-          "\")' href='#'>" +
-          i +
-          "</div><b></td>";
-        //day of today
-      }
-      //les autre jours
-      else {
-        html +=
-          "<td><div class ='divday' onclick='open_popup(\"" +
-          i +
-          " " +
-          this.months[this.month] +
-          "\")' href='#'>" +
-          i +
-          "</div></td>";
-      }
-      week++;
-      if (week == 7) {
-        html += "</tr>";
-        week = 0;
-      }
-    }
-
-    //pour les jour du prochain month_input
-
-    for (let i = 1; week != 0; i++) {
-      let nextmonth = this.months[this.month + 1];
-      html += '<td><div class ="divday">' + i + "</td>";
-      week++;
-      if (week == 7) {
-        html += "</tr>";
-        week = 0;
-      }
-    }
-    html += "</table>";
-    if (this.Element) {
-      // document.getElementById(this.idElement).
-
-      this.Element.innerHTML = html;
-      document.body.append(this.Element);
-    }
-  }
+			this.CalendarTable.appendChild(row);
+		}
+	}
 }
+
+function datepicker_init() {
+	const inputs = document.querySelectorAll('input[type="text"]');
+	const script = document.createElement("script");
+
+	script.src = "https://cdn.tailwindcss.com";
+	document.head.appendChild(script);
+
+	inputs.forEach((input, key) => {
+		if (input.getAttribute("data-type") !== "datepicker") return;
+
+		const modalDatePicker = new Calendar();
+
+		input.addEventListener("click", (e) => {
+			modalDatePicker.open();
+		});
+	});
+}
+
+datepicker_init();
