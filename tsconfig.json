@@ -1,12 +1,13 @@
 {
 	"compilerOptions": {
-		"target": "ES2015",
-		"lib": ["ES2015", "DOM", "DOM.Iterable"],
-		"outFile": "./build/datepicker.js",
-		"declaration": true,
+		"target": "ES2017",
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"lib": ["ES2020", "DOM", "DOM.Iterable"],
 		"strict": true,
+		"isolatedModules": true,
 		"skipLibCheck": true,
-		"removeComments": true,
+		"noEmit": true,
 		"types": []
 	},
 	"include": ["src"]

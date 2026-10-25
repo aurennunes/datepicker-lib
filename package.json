@@ -1,20 +1,36 @@
 {
   "name": "datepicker-lib",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "Calendar to use in forms instead of the datepicker.",
   "main": "build/datepicker.js",
-  "types": "build/datepicker.d.ts",
+  "module": "build/datepicker.mjs",
+  "types": "build/types/index.d.ts",
+  "unpkg": "build/datepicker.min.js",
+  "exports": {
+    ".": {
+      "types": "./build/types/index.d.ts",
+      "import": "./build/datepicker.mjs",
+      "require": "./build/datepicker.js"
+    },
+    "./datepicker.css": "./build/datepicker.css",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": [
+    "*.css"
+  ],
   "files": [
     "build"
   ],
   "scripts": {
-    "build": "tsc",
-    "test": "tsc && node --test test/*.test.mjs"
+    "build": "node scripts/build.mjs",
+    "typecheck": "tsc",
+    "test": "npm run typecheck && npm run build && node --test test/*.test.mjs"
   },
   "repository": "https://github.com/aurennunes/datepicker-lib",
   "author": "aurennunes <auren1207@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "esbuild": "^0.25.12",
     "jsdom": "^26.1.0",
     "typescript": "^5.9.3"
   }
