@@ -178,5 +178,5 @@ npm test          # typecheck, build, then the tests in test/ (node:test and jsd
 npm run build     # esbuild: build/datepicker.{js,min.js,mjs,css,min.css} and types
 ```
 
-CI runs `npm test` on Node 20 and 22 and checks that `build/` is up to date.
+CI runs `npm test` on Node 22 and 24 and checks that `build/` is up to date.
 Every push to `master` publishes `example/` to GitHub Pages.
