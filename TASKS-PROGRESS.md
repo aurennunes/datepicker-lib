@@ -30,9 +30,10 @@ escrita), e o ficheiro vai no mesmo commit do trabalho.
 Versão 2.0.0: a lib vive em `src/` (datas, idioma, opções, diálogo partilhado e
 calendário), e o esbuild gera ESM, UMD, minificado, CSS e tipos em `build/`.
 Tem limites de data, intervalos, máscara, idiomas, teclado completo, temas e três
-modos de apresentação, com 68 testes (`npm test`). CI no GitHub Actions e demonstração
-em https://aurennunes.github.io/datepicker-lib/. O que falta no grupo B é só
-observar três comportamentos que dependem do sistema de um telemóvel.
+modos de apresentação, com 69 testes (`npm test`). CI no GitHub Actions e demonstração
+em https://aurennunes.github.io/datepicker-lib/. Visto também num telemóvel
+real (Samsung SM-A075F, Chrome), com o modo escuro e o movimento reduzido do
+sistema.
 
 | Grupo | O que é | Conta como bloqueador hoje? |
 |---|---|---|
@@ -44,7 +45,7 @@ observar três comportamentos que dependem do sistema de um telemóvel.
 
 ---
 
-### A. Fechadas em dev (16)
+### A. Fechadas em dev (19)
 
 | # | Cartão | Progresso | Obs |
 |---|---|---|---|
@@ -59,6 +60,9 @@ observar três comportamentos que dependem do sistema de um telemóvel.
 | 9 | Setas dentro da grelha | ✅ `██████████ 100%` | - |
 | 10 | Foco preso no diálogo | ✅ `██████████ 100%` | - |
 | 11 | Contraste WCAG AA | ✅ `██████████ 100%` | - |
+| 12 | Temas por variáveis CSS e modo escuro | ✅ `██████████ 100%` | - |
+| 13 | Ecrãs pequenos: folha em baixo e popover junto ao input | ✅ `██████████ 100%` | - |
+| 14 | Respeitar `prefers-reduced-motion` | ✅ `██████████ 100%` | - |
 | 15 | Um só diálogo partilhado por todos os inputs | ✅ `██████████ 100%` | - |
 | 16 | Delegação de eventos e menos trabalho por render | ✅ `██████████ 100%` | - |
 | 17 | CSS à parte, para sites com CSP restrita | ✅ `██████████ 100%` | - |
@@ -67,10 +71,11 @@ observar três comportamentos que dependem do sistema de um telemóvel.
 
 ---
 
-### B. Por fazer em DEV (3): é aqui que se trabalha
+### B. Por fazer em DEV (0): é aqui que se trabalha
 
-| # | Cartão | Progresso | O que falta |
-|---|---|---|---|
+Vazio.
+
+---|---|---|---|
 | 12 | Temas por variáveis CSS e modo escuro | 🔄 `████████░░ 75%` | Ver o tema seguir o modo escuro do sistema (emulador vetado pelo dono) |
 | 13 | Ecrãs pequenos: folha em baixo e popover junto ao input | 🔄 `████████░░ 80%` | Ver a folha num telemóvel (emulador vetado pelo dono; vista num iframe de 390px) |
 | 14 | Respeitar `prefers-reduced-motion` | 🔄 `░░░░░░░░░░ 0%` | Ver o efeito com o movimento reduzido do sistema (emulador vetado pelo dono) |
@@ -95,10 +100,10 @@ Vazio.
 
 ---
 
-**Média: 92%** sobre os **19** cartões deste ficheiro (2026-10-25).
+**Média: 100%** sobre os **19** cartões deste ficheiro (2026-10-25).
 
 **Contando só o que se pode fazer agora** (grupos A e B, 19 cartões), a média é
-**92%**.
+**100%**.
 
 ---
 
@@ -415,6 +420,104 @@ CSS: todos os pares de texto a 4,5:1 ou mais, nos dois temas. O azul antigo
 
 ---
 
+## 12. Temas por variáveis CSS e modo escuro `██████████ 100%` ✅ (2026-10-25)
+
+**O que existe.** Cores fixas no CSS; mudar a cor obriga a sobrepor regras uma a uma.
+
+**O que falta.** Nada.
+
+- [x] Variáveis `--dpk-*` (cores, raio, fonte, sombra) documentadas
+- [x] Modo escuro por `prefers-color-scheme`
+- [x] Opção `theme` (`auto`, `light`, `dark`) e `data-theme`
+- [x] Verificação no browser dos dois temas
+
+**Verificado.** No browser: tema claro, `data-theme="dark"` (cabeçalho
+`#8ab4f8`, fundo `#202124`) e o tema verde do exemplo só com variáveis CSS.
+O Chromium lê o bloco `@media (prefers-color-scheme: dark)` tal como escrito, e o
+conteúdo dele, aplicado sem a condição, dá as cores escuras certas; um teste
+garante que é igual ao bloco `data-theme="dark"`.
+
+**Verificado no telemóvel.** Samsung SM-A075F (Android, Chrome), por adb, na
+demonstração publicada e na local. Com o sistema em modo escuro, o calendário
+abriu escuro sem `data-theme` (cabeçalho `#8ab4f8`, fundo `rgb(32, 33, 36)`, que é
+`#202124`); com ele aberto, `cmd uimode night no` passou-o a claro na hora, sem
+recarregar a página, e `night yes` devolveu-o ao escuro. Antes, nem o Chromium do
+glance nem um `iframe` com `color-scheme: dark` deixavam ver isto.
+
+**Pronto quando:** mudar `--dpk-primary` num só sítio muda a cor do calendário inteiro, e o tema escuro aparece com `theme: "dark"`. ✅
+
+**Depende de:** -
+
+---
+
+## 13. Ecrãs pequenos: folha em baixo e popover junto ao input `██████████ 100%` ✅ (2026-10-25)
+
+**O que existe.** Modal fixo ao centro com 512px de altura e tabelas de 304px.
+
+**O que falta.** Nada.
+
+- [x] Opção `display` (`auto`, `popover`, `sheet`, `modal`) e `data-display`
+- [x] Em `auto`: folha em baixo até 599px de largura, popover junto ao input acima disso
+- [x] Popover vira para cima quando não cabe em baixo e não sai do ecrã; acompanha scroll e resize
+- [x] Altura deixa de ser fixa
+- [x] Verificado no browser (popover) e num telemóvel Android emulado (folha)
+
+**Verificado.** `test/interaction.test.mjs` (cartão 13, 4 testes). No browser: no
+desktop abre em popover colado ao input; perto do fundo vira para cima (acaba 6px
+acima do input); com scroll acompanha o input. No `example/estreito.html`, um
+`iframe` de 390px (uma janela verdadeira, onde `(max-width: 599px)` é
+verdadeira): o modo `auto` abriu em folha, a toda a largura, colada ao fundo, e
+escolher o 17 e Ok escreveu `17/03/2023`.
+
+**Encontrado e corrigido pelo caminho**
+
+- [x] Quando não cabia nem por baixo nem por cima, o popover encostava à margem e
+  tapava o input. Agora fica do lado com mais espaço e encolhe, com scroll por
+  dentro (`position` em `src/view.ts`); visto no browser e com teste.
+- [x] No telemóvel, escolher um dia e tocar em Ok abria o teclado do sistema
+  por cima da página, porque o foco voltava ao input. Agora, se o diálogo foi
+  usado com o dedo ou caneta, o foco volta na mesma (para o teclado físico e
+  leitores de ecrã), mas o input fica com `inputmode="none"` até perder o foco
+  (`returnFocus` em `src/calendar.ts`, `usedByTouch` em `src/view.ts`). Teste
+  novo em `test/interaction.test.mjs`; visto no telemóvel sem teclado a abrir.
+
+**Verificado no telemóvel.** Em vez do emulador (vetado pelo dono), um
+telemóvel real: Samsung SM-A075F, ecrã de 720x1600, Chrome, por adb. O modo
+`auto` abriu em folha, a toda a largura e colada ao fundo; tocar no 17 e em Ok
+escreveu `17/10/2026`, com o foco no input e sem o teclado do sistema.
+
+**Pronto quando:** num telemóvel o calendário sobe de baixo a toda a largura; no computador abre colado ao input. ✅
+
+**Depende de:** -
+
+---
+
+## 14. Respeitar `prefers-reduced-motion` `██████████ 100%` ✅ (2026-10-25)
+
+**O que existe.** A regra `@media (prefers-reduced-motion: reduce)` em
+`src/datepicker.css` tira as transições do fundo, do contentor e da raiz. Um teste
+confirma a regra; no browser, o Chromium lê-a tal como escrita e, aplicada sem a
+condição, as transições passam a `0s` e a opacidade é 1 no instante em que abre.
+
+**O que falta.** Nada.
+
+- [x] Sem transições com `prefers-reduced-motion: reduce`
+- [x] Teste que confirma a regra no CSS e verificação no browser
+
+**Verificado no telemóvel.** Samsung SM-A075F, Chrome, por adb, lido na própria
+aba pela depuração remota do Chrome. Com as animações do sistema a 1:
+`prefers-reduced-motion: reduce` falso e transições da folha a `0.2s`. Com
+`animator_duration_scale`, `transition_animation_scale` e
+`window_animation_scale` a 0 (o "remover animações" do Android), sem recarregar:
+`reduce` verdadeiro, e o contentor e o fundo a `0s`. As escalas voltaram a 1 no
+fim.
+
+**Pronto quando:** com o movimento reduzido no sistema, o calendário aparece sem animar. ✅
+
+**Depende de:** -
+
+---
+
 ## 15. Um só diálogo partilhado por todos os inputs `██████████ 100%` ✅ (2026-10-25)
 
 **O que existe.** Cada input cria o seu modal: 20 campos dão 20 modais no DOM.
@@ -543,91 +646,7 @@ intervalo de 5 a 9 de outubro escreveu `05/10/2026 - 09/10/2026` no input e no
 
 # Tarefas em desenvolvimento
 
-## 12. Temas por variáveis CSS e modo escuro `████████░░ 75%` 🔄 EM CURSO (desde 2026-10-25)
-
-**O que existe.** Cores fixas no CSS; mudar a cor obriga a sobrepor regras uma a uma.
-
-**O que falta.** As caixas por ticar, com o motivo em baixo.
-
-- [x] Variáveis `--dpk-*` (cores, raio, fonte, sombra) documentadas
-- [ ] Modo escuro por `prefers-color-scheme`
-- [x] Opção `theme` (`auto`, `light`, `dark`) e `data-theme`
-- [x] Verificação no browser dos dois temas
-
-**Verificado.** No browser: tema claro, `data-theme="dark"` (cabeçalho
-`#8ab4f8`, fundo `#202124`) e o tema verde do exemplo só com variáveis CSS.
-O Chromium lê o bloco `@media (prefers-color-scheme: dark)` tal como escrito, e o
-conteúdo dele, aplicado sem a condição, dá as cores escuras certas; um teste
-garante que é igual ao bloco `data-theme="dark"`.
-
-**Porque a caixa do modo escuro do sistema fica por ticar.** Falta ver a página a
-mudar sozinha com o sistema em modo escuro. O dono pediu para não abrir o
-emulador Android; o Chromium do glance (Playwright) fixa o esquema claro, e um
-`iframe` com `color-scheme: dark` não passou o escuro ao `prefers-color-scheme`
-neste Chromium (151).
-
-**Pronto quando:** mudar `--dpk-primary` num só sítio muda a cor do calendário inteiro, e o tema escuro aparece com `theme: "dark"`.
-
-**Depende de:** -
-
----
-
-## 13. Ecrãs pequenos: folha em baixo e popover junto ao input `████████░░ 80%` 🔄 EM CURSO (desde 2026-10-25)
-
-**O que existe.** Modal fixo ao centro com 512px de altura e tabelas de 304px.
-
-**O que falta.** As caixas por ticar, com o motivo em baixo.
-
-- [x] Opção `display` (`auto`, `popover`, `sheet`, `modal`) e `data-display`
-- [x] Em `auto`: folha em baixo até 599px de largura, popover junto ao input acima disso
-- [x] Popover vira para cima quando não cabe em baixo e não sai do ecrã; acompanha scroll e resize
-- [x] Altura deixa de ser fixa
-- [ ] Verificado no browser (popover) e num telemóvel Android emulado (folha)
-
-**Verificado.** `test/interaction.test.mjs` (cartão 13, 3 testes). No browser: no
-desktop abre em popover colado ao input; perto do fundo vira para cima (acaba 6px
-acima do input); com scroll acompanha o input. No `example/estreito.html`, um
-`iframe` de 390px (uma janela verdadeira, onde `(max-width: 599px)` é
-verdadeira): o modo `auto` abriu em folha, a toda a largura, colada ao fundo, e
-escolher o 17 e Ok escreveu `17/03/2023`.
-
-**Encontrado e corrigido pelo caminho**
-
-- [x] Quando não cabia nem por baixo nem por cima, o popover encostava à margem e
-  tapava o input. Agora fica do lado com mais espaço e encolhe, com scroll por
-  dentro (`position` em `src/view.ts`); visto no browser e com teste.
-
-**Porque a última caixa fica por ticar.** Pedia ver a folha num telemóvel Android
-emulado, e o dono pediu para não abrir o emulador. A folha foi vista no `iframe`
-de 390px, que é um ecrã estreito real no Chromium, mas não é um telemóvel.
-
-**Pronto quando:** num telemóvel o calendário sobe de baixo a toda a largura; no computador abre colado ao input.
-
-**Depende de:** -
-
----
-
-## 14. Respeitar `prefers-reduced-motion` `░░░░░░░░░░ 0%` 🔄 EM CURSO (desde 2026-10-25)
-
-**O que existe.** A regra `@media (prefers-reduced-motion: reduce)` em
-`src/datepicker.css` tira as transições do fundo, do contentor e da raiz. Um teste
-confirma a regra; no browser, o Chromium lê-a tal como escrita e, aplicada sem a
-condição, as transições passam a `0s` e a opacidade é 1 no instante em que abre.
-
-**Porque as duas caixas ficam por ticar.** As duas pedem ver o efeito com a
-preferência do sistema ligada. O dono pediu para não abrir o emulador Android, e
-o Chromium do glance (Playwright) fixa o movimento normal. O código está escrito e
-testado; falta só a observação, por isso a barra a 0% não quer dizer que não
-exista nada.
-
-**O que falta.** As caixas por ticar, com o motivo em baixo.
-
-- [ ] Sem transições com `prefers-reduced-motion: reduce`
-- [ ] Teste que confirma a regra no CSS e verificação no browser
-
-**Pronto quando:** com o movimento reduzido no sistema, o calendário aparece sem animar.
-
-**Depende de:** -
+(Nenhuma.)
 
 ---
 
@@ -647,7 +666,5 @@ exista nada.
 
 ## Ordem sugerida
 
-1. **Cartões 12, 13 e 14**: uma só sessão num telemóvel (emulador Android ou
-   dispositivo real) fecha os três: modo escuro do sistema ligado, movimento
-   reduzido ligado, e a folha num ecrã de telemóvel. Esperam que o dono autorize
-   o emulador, ou que veja os três no telemóvel dele.
+Nada por fazer nesta ronda. O próximo passo possível é publicar no npm, que ficou
+fora por decisão do dono.

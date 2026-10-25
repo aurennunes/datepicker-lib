@@ -191,6 +191,34 @@ describe("cartão 13: apresentação", () => {
 		assert.equal(container().style.top, "8px");
 		assert.equal(container().style.maxHeight, `${500 - 6 - 8}px`);
 	});
+	test("fechar com o dedo devolve o foco sem abrir o teclado do telemóvel", () => {
+		const env = setup({ body: '<input type="text" data-type="datepicker">' });
+		const tap = (target, pointerType) => {
+			const event = new env.window.Event("pointerdown", { bubbles: true });
+			event.pointerType = pointerType;
+			target.dispatchEvent(event);
+			target.click();
+		};
+
+		// Com o dedo: o foco volta ao input, mas com inputmode="none" até sair dele.
+		env.input.click();
+		tap(env.cell("17"), "touch");
+		tap(env.$(".dpk-ok-btn"), "touch");
+		assert.equal(env.input.value.slice(0, 2), "17");
+		assert.equal(focused(env), env.input);
+		assert.equal(env.input.getAttribute("inputmode"), "none");
+		env.input.blur();
+		assert.equal(env.input.getAttribute("inputmode"), "numeric");
+
+		// Com o rato, ou só com o teclado, o input fica como estava.
+		env.input.click();
+		tap(env.$(".dpk-cancel-btn"), "mouse");
+		assert.equal(focused(env), env.input);
+		assert.equal(env.input.getAttribute("inputmode"), "numeric");
+		env.input.click();
+		env.key(focused(env), "Escape");
+		assert.equal(env.input.getAttribute("inputmode"), "numeric");
+	});
 });
 
 describe("cartão 15: um só diálogo", () => {

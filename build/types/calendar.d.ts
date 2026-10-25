@@ -37,6 +37,7 @@ export declare class Calendar implements ViewOwner {
     isOpen(): boolean;
     open(): void;
     close(): void;
+    private returnFocus;
     /** Fecha sem mexer no input: a próxima abertura volta à data confirmada. */
     cancel(): void;
     confirm(): void;

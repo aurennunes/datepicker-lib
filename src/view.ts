@@ -54,6 +54,8 @@ export class View {
 	owner: ViewOwner | null = null;
 	private anchor: HTMLElement | null = null;
 	private display: Exclude<Display, "auto"> = "modal";
+	/** O tipo do último toque no diálogo ("mouse", "touch", "pen"), ou "". */
+	private pointer = "";
 
 	constructor() {
 		const id = `dpk_${Math.random().toString(36).slice(2)}`;
@@ -109,6 +111,13 @@ export class View {
 			if (this.owner) action(this.owner);
 		};
 
+		root.addEventListener(
+			"pointerdown",
+			(event) => {
+				this.pointer = (event as PointerEvent).pointerType || "";
+			},
+			true
+		);
 		query(".dpk-backdrop").addEventListener("click", call((o) => o.cancel()));
 		this.changeButton.addEventListener("click", call((o) => o.toggleView()));
 		this.prevButton.addEventListener("click", call((o) => o.previous()));
@@ -162,6 +171,7 @@ export class View {
 		if (theme === "auto") this.root.removeAttribute("data-theme");
 		else this.root.setAttribute("data-theme", theme);
 
+		this.pointer = "";
 		this.root.classList.add("dpk-open");
 		this.position();
 
@@ -177,6 +187,11 @@ export class View {
 		window.removeEventListener("scroll", this.position, true);
 		this.owner = null;
 		this.anchor = null;
+	}
+
+	/** Se o diálogo foi usado com o dedo ou caneta, e não com rato ou teclado. */
+	usedByTouch(): boolean {
+		return this.pointer === "touch" || this.pointer === "pen";
 	}
 
 	destroy() {

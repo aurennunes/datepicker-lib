@@ -422,6 +422,8 @@ var View = class {
     this.owner = null;
     this.anchor = null;
     this.display = "modal";
+    /** O tipo do último toque no diálogo ("mouse", "touch", "pen"), ou "". */
+    this.pointer = "";
     // Popover: por baixo do input; se não couber, por cima. Se não couber de
     // nenhum lado, fica do lado com mais espaço e encolhe (o contentor faz scroll
     // por dentro), em vez de tapar o input.
@@ -526,6 +528,13 @@ var View = class {
     const call = (action) => () => {
       if (this.owner) action(this.owner);
     };
+    root.addEventListener(
+      "pointerdown",
+      (event) => {
+        this.pointer = event.pointerType || "";
+      },
+      true
+    );
     query(".dpk-backdrop").addEventListener("click", call((o) => o.cancel()));
     this.changeButton.addEventListener("click", call((o) => o.toggleView()));
     this.prevButton.addEventListener("click", call((o) => o.previous()));
@@ -566,6 +575,7 @@ var View = class {
     this.root.setAttribute("data-display", this.display);
     if (theme === "auto") this.root.removeAttribute("data-theme");
     else this.root.setAttribute("data-theme", theme);
+    this.pointer = "";
     this.root.classList.add("dpk-open");
     this.position();
     document.addEventListener("keydown", this.onDocumentKeydown);
@@ -579,6 +589,10 @@ var View = class {
     window.removeEventListener("scroll", this.position, true);
     this.owner = null;
     this.anchor = null;
+  }
+  /** Se o diálogo foi usado com o dedo ou caneta, e não com rato ou teclado. */
+  usedByTouch() {
+    return this.pointer === "touch" || this.pointer === "pen";
   }
   destroy() {
     this.hide();
@@ -772,8 +786,27 @@ var Calendar = class {
   }
   close() {
     if (!this.isOpen()) return;
-    currentView().hide();
-    this.input.focus();
+    const view = currentView();
+    const touch = view.usedByTouch();
+    view.hide();
+    this.returnFocus(touch);
+  }
+  // O foco volta ao input, para quem usa o teclado ou um leitor de ecrã. Com o
+  // dedo, isso abria o teclado do telemóvel por cima da página: até o input
+  // perder o foco, fica com inputmode="none".
+  returnFocus(touch) {
+    const input = this.input;
+    if (touch) {
+      const mode = input.getAttribute("inputmode");
+      const restore = () => {
+        input.removeEventListener("blur", restore);
+        if (mode === null) input.removeAttribute("inputmode");
+        else input.setAttribute("inputmode", mode);
+      };
+      input.setAttribute("inputmode", "none");
+      input.addEventListener("blur", restore);
+    }
+    input.focus();
   }
   /** Fecha sem mexer no input: a próxima abertura volta à data confirmada. */
   cancel() {

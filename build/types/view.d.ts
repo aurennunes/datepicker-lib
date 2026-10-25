@@ -37,11 +37,15 @@ export declare class View {
     owner: ViewOwner | null;
     private anchor;
     private display;
+    /** O tipo do último toque no diálogo ("mouse", "touch", "pen"), ou "". */
+    private pointer;
     constructor();
     private cellFrom;
     isOpenFor(owner: ViewOwner): boolean;
     show(owner: ViewOwner, anchor: HTMLElement, display: Display, theme: Theme): void;
     hide(): void;
+    /** Se o diálogo foi usado com o dedo ou caneta, e não com rato ou teclado. */
+    usedByTouch(): boolean;
     destroy(): void;
     position: () => void;
     private onDocumentKeydown;

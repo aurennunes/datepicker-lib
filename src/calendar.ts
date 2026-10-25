@@ -178,8 +178,28 @@ export class Calendar implements ViewOwner {
 
 	close() {
 		if (!this.isOpen()) return;
-		(currentView() as View).hide();
-		this.input.focus();
+		const view = currentView() as View;
+		const touch = view.usedByTouch();
+		view.hide();
+		this.returnFocus(touch);
+	}
+
+	// O foco volta ao input, para quem usa o teclado ou um leitor de ecrã. Com o
+	// dedo, isso abria o teclado do telemóvel por cima da página: até o input
+	// perder o foco, fica com inputmode="none".
+	private returnFocus(touch: boolean) {
+		const input = this.input;
+		if (touch) {
+			const mode = input.getAttribute("inputmode");
+			const restore = () => {
+				input.removeEventListener("blur", restore);
+				if (mode === null) input.removeAttribute("inputmode");
+				else input.setAttribute("inputmode", mode);
+			};
+			input.setAttribute("inputmode", "none");
+			input.addEventListener("blur", restore);
+		}
+		input.focus();
 	}
 
 	/** Fecha sem mexer no input: a próxima abertura volta à data confirmada. */
