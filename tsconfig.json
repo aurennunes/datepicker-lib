@@ -1,19 +1,13 @@
 {
-	"ts-node": {
-		"transpileOnly": true,
-		"require": ["tsconfig-paths/register"]
-	},
 	"compilerOptions": {
-		"target": "ES3",
-		"outDir": "",
+		"target": "ES2015",
+		"lib": ["ES2015", "DOM", "DOM.Iterable"],
 		"outFile": "./build/datepicker.js",
-		"baseUrl": "./",
-		"paths": {
-			"@/*": ["./src/*"]
-		},
+		"declaration": true,
 		"strict": true,
 		"skipLibCheck": true,
 		"removeComments": true,
-		"preserveConstEnums": true
-	}
+		"types": []
+	},
+	"include": ["src"]
 }
