@@ -5,26 +5,96 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>datepicker-lib: exemplo</title>
 		<style>
-			body { font-family: system-ui, sans-serif; padding: 2rem; }
-			label { display: block; margin-bottom: 1rem; }
+			body { font-family: system-ui, sans-serif; margin: 0 auto; padding: 1.5rem; max-width: 720px; line-height: 1.4; }
+			h1 { font-size: 1.4rem; margin-bottom: 0.25rem; }
+			.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem 1.5rem; margin: 1.5rem 0; }
+			label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.9rem; }
+			label small { color: #555; }
+			input { font: inherit; padding: 0.45rem 0.6rem; border: 1px solid #999; border-radius: 6px; }
+			.panel { padding: 0.8rem 1rem; border-radius: 8px; background: #f2f4f7; font-size: 0.9rem; }
+			body.verde .dpk-root { --dpk-primary: #2e7d32; --dpk-range: #d7ecd8; --dpk-radius: 4px; }
 		</style>
 	</head>
 	<body>
-		<label>
-			Data de nascimento
-			<input type="text" data-type="datepicker" />
-		</label>
-		<label>
-			Data com valor inicial
-			<input type="text" data-type="datepicker" value="05/03/2023" />
-		</label>
-		<p>Última data confirmada: <output id="result">-</output></p>
+		<h1>datepicker-lib</h1>
+		<p>Clique num campo para abrir o calendário, ou chegue lá com Tab e escreva só os números.</p>
+
+		<div class="grid">
+			<label>
+				Data simples
+				<input id="simples" type="text" data-type="datepicker" />
+			</label>
+			<label>
+				Com valor inicial
+				<input id="inicial" type="text" data-type="datepicker" value="05/03/2023" />
+			</label>
+			<label>
+				Marcação <small>próximos 60 dias, sem fins de semana</small>
+				<input id="marcacao" type="text" />
+			</label>
+			<label>
+				Intervalo <small>data-range</small>
+				<input id="intervalo" type="text" data-type="datepicker" data-range />
+			</label>
+			<label>
+				English <small>data-locale="en-US"</small>
+				<input id="ingles" type="text" data-type="datepicker" data-locale="en-US" />
+			</label>
+			<label>
+				Angola <small>data-locale="pt-AO", semana à segunda</small>
+				<input id="angola" type="text" data-type="datepicker" data-locale="pt-AO" />
+			</label>
+			<label>
+				Tema escuro <small>data-theme="dark"</small>
+				<input id="escuro" type="text" data-type="datepicker" data-theme="dark" />
+			</label>
+			<label>
+				Modal ao centro <small>data-display="modal"</small>
+				<input id="modal" type="text" data-type="datepicker" data-display="modal" />
+			</label>
+			<label>
+				Formato ISO <small>data-format="aaaa-mm-dd"</small>
+				<input id="iso" type="text" data-type="datepicker" data-format="aaaa-mm-dd" />
+			</label>
+		</div>
+
+		<p>
+			<label style="flex-direction: row; align-items: center">
+				<input id="verde" type="checkbox" /> Tema verde (só variáveis CSS)
+			</label>
+		</p>
+
+		<div class="panel">
+			<div>Última data confirmada: <output id="result">-</output></div>
+			<div>Sistema: <span id="ambiente">-</span></div>
+		</div>
 
 		<script src="../build/datepicker.js"></script>
 		<script>
-			datepicker_init(function (date) {
-				document.getElementById("result").textContent = date;
+			function mostrar(texto) {
+				document.getElementById("result").textContent = texto;
+			}
+
+			datepicker_init(mostrar);
+
+			var hoje = new Date();
+			var limite = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() + 60);
+			datepicker_init({ onOk: mostrar, min: hoje, max: limite, disabledDays: [0, 6] }, "#marcacao");
+
+			document.getElementById("verde").addEventListener("change", function (e) {
+				document.body.classList.toggle("verde", e.target.checked);
 			});
+
+			function ambiente() {
+				var escuro = matchMedia("(prefers-color-scheme: dark)").matches;
+				var reduzido = matchMedia("(prefers-reduced-motion: reduce)").matches;
+				document.getElementById("ambiente").textContent =
+					"tema " + (escuro ? "escuro" : "claro") +
+					", movimento " + (reduzido ? "reduzido" : "normal") +
+					", largura " + window.innerWidth + "px";
+			}
+			ambiente();
+			window.addEventListener("resize", ambiente);
 		</script>
 	</body>
 </html>

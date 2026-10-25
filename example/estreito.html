@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt">
+	<head>
+		<meta charset="UTF-8" />
+		<title>datepicker-lib: ecrã estreito</title>
+		<style>
+			body { font-family: system-ui, sans-serif; margin: 1rem; display: flex; gap: 2rem; align-items: flex-start; }
+			figure { margin: 0; }
+			figcaption { font-size: 0.85rem; margin-bottom: 0.4rem; }
+			iframe { width: 390px; height: 700px; border: 1px solid #999; border-radius: 12px; }
+			#escuro { color-scheme: dark; }
+		</style>
+	</head>
+	<body>
+		<!-- Cada iframe tem a sua própria janela de 390px: as media queries do
+		     exemplo avaliam-se contra ela, como num telemóvel. O segundo pede
+		     color-scheme: dark, que o Chrome passa ao prefers-color-scheme do iframe. -->
+		<figure>
+			<figcaption>390px, tema do sistema claro</figcaption>
+			<iframe id="claro" src="index.html"></iframe>
+		</figure>
+		<figure>
+			<figcaption>390px, tema do sistema escuro</figcaption>
+			<iframe id="escuro" src="index.html"></iframe>
+		</figure>
+	</body>
+</html>

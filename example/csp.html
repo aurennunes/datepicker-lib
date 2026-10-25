@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt">
+	<head>
+		<meta charset="UTF-8" />
+		<!-- CSP restrita: sem estilos nem scripts inline. -->
+		<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'self'" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>datepicker-lib: CSP restrita</title>
+		<link rel="stylesheet" href="../build/datepicker.css" />
+		<link rel="stylesheet" href="csp.css" />
+	</head>
+	<body>
+		<h1>Página com CSP restrita</h1>
+		<p>
+			O <code>&lt;style&gt;</code> injetado seria bloqueado aqui. Com
+			<code>injectStyles: false</code> e o <code>datepicker.css</code> num
+			<code>&lt;link&gt;</code>, o calendário aparece igual.
+		</p>
+		<label>
+			Data
+			<input id="data" type="text" data-type="datepicker" />
+		</label>
+
+		<script src="../build/datepicker.js"></script>
+		<script src="csp.js"></script>
+	</body>
+</html>
