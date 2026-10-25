@@ -1,0 +1,21 @@
+export declare const DEFAULT_FORMAT = "dd/mm/aaaa";
+export declare const RANGE_SEPARATOR = " - ";
+export declare function validateFormat(format: string): void;
+export declare function createDate(year: number, month: number, day: number): Date;
+export declare function startOfDay(date: Date): Date;
+export declare function daysInMonth(month: number, year: number): number;
+export declare function sameDay(a: Date | null, b: Date | null): boolean;
+export declare function compareDay(a: Date, b: Date): number;
+export declare function addDays(date: Date, days: number): Date;
+export declare function addMonths(date: Date, months: number): Date;
+export declare function isoKey(date: Date): string;
+export declare function parseIso(text: string): Date | null;
+export declare function formatDate(date: Date, format?: string): string;
+export declare function parseDate(text: string, format?: string): Date | null;
+export declare function formatRange(start: Date, end: Date, format: string): string;
+export declare function parseRange(text: string, format: string): {
+    start: Date;
+    end: Date;
+} | null;
+export declare function maskText(text: string, pattern: string): string;
+export declare function maskLength(pattern: string): number;
