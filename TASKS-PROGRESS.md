@@ -30,9 +30,9 @@ escrita), e o ficheiro vai no mesmo commit do trabalho.
 Versão 2.0.0: a lib vive em `src/` (datas, idioma, opções, diálogo partilhado e
 calendário), e o esbuild gera ESM, UMD, minificado, CSS e tipos em `build/`.
 Tem limites de data, intervalos, máscara, idiomas, teclado completo, temas e três
-modos de apresentação, com 68 testes (`npm test`). O que falta no grupo B é só
-observar três comportamentos que dependem do sistema operativo de um telemóvel,
-e publicar o CI e o Pages.
+modos de apresentação, com 68 testes (`npm test`). CI no GitHub Actions e demonstração
+em https://aurennunes.github.io/datepicker-lib/. O que falta no grupo B é só
+observar três comportamentos que dependem do sistema de um telemóvel.
 
 | Grupo | O que é | Conta como bloqueador hoje? |
 |---|---|---|
@@ -44,7 +44,7 @@ e publicar o CI e o Pages.
 
 ---
 
-### A. Fechadas em dev (15)
+### A. Fechadas em dev (16)
 
 | # | Cartão | Progresso | Obs |
 |---|---|---|---|
@@ -63,17 +63,17 @@ e publicar o CI e o Pages.
 | 16 | Delegação de eventos e menos trabalho por render | ✅ `██████████ 100%` | - |
 | 17 | CSS à parte, para sites com CSP restrita | ✅ `██████████ 100%` | - |
 | 18 | Build ESM, UMD e minificado | ✅ `██████████ 100%` | - |
+| 19 | CI no GitHub Actions e demonstração no GitHub Pages | ✅ `██████████ 100%` | - |
 
 ---
 
-### B. Por fazer em DEV (4): é aqui que se trabalha
+### B. Por fazer em DEV (3): é aqui que se trabalha
 
 | # | Cartão | Progresso | O que falta |
 |---|---|---|---|
 | 12 | Temas por variáveis CSS e modo escuro | 🔄 `████████░░ 75%` | Ver o tema seguir o modo escuro do sistema (emulador vetado pelo dono) |
 | 13 | Ecrãs pequenos: folha em baixo e popover junto ao input | 🔄 `████████░░ 80%` | Ver a folha num telemóvel (emulador vetado pelo dono; vista num iframe de 390px) |
 | 14 | Respeitar `prefers-reduced-motion` | 🔄 `░░░░░░░░░░ 0%` | Ver o efeito com o movimento reduzido do sistema (emulador vetado pelo dono) |
-| 19 | CI no GitHub Actions e demonstração no GitHub Pages | 🔄 `░░░░░░░░░░ 0%` | Push, CI verde e página publicada |
 
 ---
 
@@ -95,10 +95,10 @@ Vazio.
 
 ---
 
-**Média: 87%** sobre os **19** cartões deste ficheiro (2026-10-25).
+**Média: 92%** sobre os **19** cartões deste ficheiro (2026-10-25).
 
 **Contando só o que se pode fazer agora** (grupos A e B, 19 cartões), a média é
-**87%**.
+**92%**.
 
 ---
 
@@ -508,6 +508,39 @@ mais; o minificado é o que se serve.
 
 ---
 
+## 19. CI no GitHub Actions e demonstração no GitHub Pages `██████████ 100%` ✅ (2026-10-25)
+
+**O que existe.** Nada corre no GitHub.
+
+**O que falta.** Nada.
+
+- [x] Workflow de CI: `npm ci`, `npm test` e build atualizado, em Node 22 e 24
+- [x] Workflow de Pages que publica o exemplo com o build
+- [x] Pages ativado no repositório
+- [x] CI verde e página publicada, vistos a correr
+
+**Subtarefa corrigida durante o trabalho.** A caixa do CI dizia "Node 20 e 22".
+A primeira execução passou assim, mas avisou que as ações v4 correm em Node 20,
+descontinuado pelo GitHub, e o Node 20 saiu de suporte em abril de 2026. A
+matriz passou a Node 22 e 24 e as ações às versões atuais (`checkout` e
+`setup-node` v7, `configure-pages` v6, `upload-pages-artifact` v5,
+`deploy-pages` v5), em `b1bcc74`.
+
+**Verificado.** Execução 40177912615 do CI: `test (22)` e `test (24)` a verde,
+68 testes e 68 a passar em cada um, e o passo `build/ atualizado` sem diferenças;
+sem avisos de descontinuação. Execução 40177912650 do Pages a verde. O Pages foi
+ativado com `gh api -X POST repos/aurennunes/datepicker-lib/pages -f
+build_type=workflow`. No browser, https://aurennunes.github.io/datepicker-lib/
+redireciona para `example/`, carrega o `build/datepicker.js` publicado, e o
+intervalo de 5 a 9 de outubro escreveu `05/10/2026 - 09/10/2026` no input e no
+`onOk`.
+
+**Pronto quando:** cada push corre os testes no GitHub, e o exemplo abre no endereço do GitHub Pages. ✅
+
+**Depende de:** cartão 18
+
+---
+
 # Tarefas em desenvolvimento
 
 ## 12. Temas por variáveis CSS e modo escuro `████████░░ 75%` 🔄 EM CURSO (desde 2026-10-25)
@@ -598,23 +631,6 @@ exista nada.
 
 ---
 
-## 19. CI no GitHub Actions e demonstração no GitHub Pages `░░░░░░░░░░ 0%` 🔄 EM CURSO (desde 2026-10-25)
-
-**O que existe.** Nada corre no GitHub.
-
-**O que falta.** As caixas por ticar, com o motivo em baixo.
-
-- [ ] Workflow de CI: `npm ci`, `npm test` e build atualizado, em Node 20 e 22
-- [ ] Workflow de Pages que publica o exemplo com o build
-- [ ] Pages ativado no repositório
-- [ ] CI verde e página publicada, vistos a correr
-
-**Pronto quando:** cada push corre os testes no GitHub, e o exemplo abre no endereço do GitHub Pages.
-
-**Depende de:** cartão 18
-
----
-
 # Próximas tarefas
 
 (Nenhuma por agora.)
@@ -631,8 +647,7 @@ exista nada.
 
 ## Ordem sugerida
 
-1. **Cartão 19**: push, CI verde e página publicada. Não depende de ninguém.
-2. **Cartões 12, 13 e 14**: uma só sessão num telemóvel (emulador Android ou
+1. **Cartões 12, 13 e 14**: uma só sessão num telemóvel (emulador Android ou
    dispositivo real) fecha os três: modo escuro do sistema ligado, movimento
    reduzido ligado, e a folha num ecrã de telemóvel. Esperam que o dono autorize
    o emulador, ou que veja os três no telemóvel dele.

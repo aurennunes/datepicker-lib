@@ -1,19 +1,39 @@
 # datepicker-lib
 
-Calendário em modal para inputs de formulário, sem dependências. Um só ficheiro
-de código (`src/index.ts`), compilado pelo `tsc` para um script global em
-`build/datepicker.js` (com `build/datepicker.d.ts`).
+Calendário para inputs de formulário, sem dependências.
+
+## Estrutura
+
+| Ficheiro | O que tem |
+|---|---|
+| `src/index.ts` | `datepicker_init` e as exportações públicas |
+| `src/calendar.ts` | `Calendar`: estado de cada input, grelhas, teclado, intervalos, máscara |
+| `src/view.ts` | O diálogo partilhado (um só por página), foco preso, posição do popover |
+| `src/options.ts` | `DatepickerOptions` e a leitura dos atributos `data-*` |
+| `src/dates.ts` | Formatar, ler, máscara e contas de datas, sem DOM |
+| `src/locale.ts` | Textos `pt`/`en`, nomes do `Intl`, início da semana |
+| `src/datepicker.css` | Todo o CSS, só com classes `.dpk-*` e variáveis `--dpk-*` |
+| `scripts/build.mjs` | esbuild: ESM, UMD, minificado, CSS e tipos |
+| `example/` | `index.html` (todas as opções), `csp.html`, `estreito.html` |
 
 ## Comandos
 
 ```bash
 npm install
-npm run build   # tsc: gera build/datepicker.js e build/datepicker.d.ts
-npm test        # compila e corre test/*.test.mjs com node:test e jsdom
+npm run build   # build/datepicker.{js,min.js,mjs,css,min.css} e build/types
+npm test        # typecheck, build e test/*.test.mjs (node:test e jsdom)
 ```
 
-O `build/` está no repositório: quem mexe no `src/` corre `npm run build` e
-commita o `build/` no mesmo commit.
+- O `build/` está no repositório e o CI falha se não bater com o `src/`: quem mexe
+  no `src/` corre `npm run build` e commita o `build/` no mesmo commit.
+- Os testes carregam o `build/datepicker.js` como `<script>` num jsdom, como no
+  browser, e o `build/datepicker.mjs` por `import`.
+- Para ver no browser: `python3 -m http.server 8000 --directory .` e
+  `http://localhost:8000/example/`. Um ecrã estreito real é o `example/estreito.html`
+  (iframes de 390px).
+- CI (`.github/workflows/ci.yml`) em Node 22 e 24; o `pages.yml` publica o
+  `example/` e o `build/` em https://aurennunes.github.io/datepicker-lib/ a cada
+  push para `master`.
 
 ## Estilo de commit: Conventional Commits
 
