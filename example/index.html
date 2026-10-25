@@ -1,14 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 	<head>
 		<meta charset="UTF-8" />
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Example</title>
+		<title>datepicker-lib: exemplo</title>
+		<style>
+			body { font-family: system-ui, sans-serif; padding: 2rem; }
+			label { display: block; margin-bottom: 1rem; }
+		</style>
 	</head>
 	<body>
-		<input type="text" data-type="datepicker" />
+		<label>
+			Data de nascimento
+			<input type="text" data-type="datepicker" />
+		</label>
+		<label>
+			Data com valor inicial
+			<input type="text" data-type="datepicker" value="05/03/2023" />
+		</label>
+		<p>Última data confirmada: <output id="result">-</output></p>
 
 		<script src="../build/datepicker.js"></script>
+		<script>
+			datepicker_init(function (date) {
+				document.getElementById("result").textContent = date;
+			});
+		</script>
 	</body>
 </html>
